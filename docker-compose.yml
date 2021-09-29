@@ -1,0 +1,65 @@
+version: "3.3"
+services:
+  account:
+    build: ./account-service
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "9001:9001"
+    env_file:
+      - ./account-service/.env.staging
+    depends_on:
+     - db
+    # networks:
+    #   - network
+
+  email:
+    build: ./emailTemplates-service
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "9002:9002"
+    env_file:
+      - ./emailTemplates-service/.env.staging
+    depends_on:
+     - db
+  #   # networks:
+  #   #   - network
+  post:
+    build: ./post-service
+    volumes:
+      - .:/usr/src/app
+    ports:
+      - "9003:9003"
+    env_file:
+      - ./post-service/.env.staging
+    depends_on:
+     - db
+  #   # networks:
+  #   #   - network
+  db:
+    image: mysql
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    ports:
+      - "3307:3306"
+    volumes:
+      - my-datavolume:/var/lib/mysql
+    # expose:
+    #   - '3307'
+    # networks:
+    #   - network
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    # networks:
+    #   - network
+# networks:
+#     network:
+volumes:
+  my-datavolume:
